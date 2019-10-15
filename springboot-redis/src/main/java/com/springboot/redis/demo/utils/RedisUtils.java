@@ -19,13 +19,11 @@ import java.util.concurrent.TimeUnit;
  * @Author: lisy
  * @CreatedDate: 2019/4/11
  */
-@Component
-public class RedisUtils {
+@Component public class RedisUtils {
 
     private static org.apache.log4j.Logger logger = LogManager.getLogger(RedisUtils.class.getName());
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    @Autowired private RedisTemplate redisTemplate;
 
     private DefaultRedisScript<Long> delScript;
 
@@ -34,8 +32,8 @@ public class RedisUtils {
      * @param redisTemplate
      * @return
      */
-    private RedisTemplate redisSerializer(RedisTemplate redisTemplate){
-        StringRedisSerializer stringRedisSerializer =new StringRedisSerializer();
+    private RedisTemplate redisSerializer(RedisTemplate redisTemplate) {
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         redisTemplate.setValueSerializer(stringRedisSerializer);
         redisTemplate.setKeySerializer(stringRedisSerializer);
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
@@ -44,13 +42,11 @@ public class RedisUtils {
         return redisTemplate;
     }
 
-    @PostConstruct
-    public void init() {
+    @PostConstruct public void init() {
         delScript = new DefaultRedisScript<Long>();
         delScript.setScriptText("return redis.call('HDEL', KEYS[1], KEYS[2])" + "");
         delScript.setResultType(Long.class);
     }
-
 
     /**
      * 写入缓存
@@ -69,6 +65,7 @@ public class RedisUtils {
         }
         return result;
     }
+
     /**
      * 写入缓存设置时效时间
      * @param key
@@ -87,6 +84,7 @@ public class RedisUtils {
         }
         return result;
     }
+
     /**
      * 批量删除对应的value
      * @param keys
@@ -106,6 +104,7 @@ public class RedisUtils {
         if (keys.size() > 0)
             redisSerializer(redisTemplate).delete(keys);
     }
+
     /**
      * 删除对应的value
      * @param key
@@ -115,6 +114,7 @@ public class RedisUtils {
             redisSerializer(redisTemplate).delete(key);
         }
     }
+
     /**
      * 判断缓存中是否有对应的value
      * @param key
@@ -123,6 +123,7 @@ public class RedisUtils {
     public boolean exists(final String key) {
         return redisSerializer(redisTemplate).hasKey(key);
     }
+
     /**
      * 读取缓存
      * @param key
@@ -134,15 +135,16 @@ public class RedisUtils {
         result = operations.get(key);
         return result;
     }
+
     /**
      * 哈希 添加
      * @param key
      * @param hashKey
      * @param value
      */
-    public void hmSet(String key, Object hashKey, Object value){
+    public void hmSet(String key, Object hashKey, Object value) {
         HashOperations<String, Object, Object> hash = redisSerializer(redisTemplate).opsForHash();
-        hash.put(key,hashKey,value);
+        hash.put(key, hashKey, value);
     }
 
     /**
@@ -151,9 +153,9 @@ public class RedisUtils {
      * @param hashKey
      * @return
      */
-    public Object hmGet(String key, Object hashKey){
-        HashOperations<String, Object, Object>  hash = redisSerializer(redisTemplate).opsForHash();
-        return hash.get(key,hashKey);
+    public Object hmGet(String key, Object hashKey) {
+        HashOperations<String, Object, Object> hash = redisSerializer(redisTemplate).opsForHash();
+        return hash.get(key, hashKey);
     }
 
     /**
@@ -162,13 +164,13 @@ public class RedisUtils {
      * @param hashKey
      * @return
      */
-    public void hmDel(String key, Object hashKey){
-        try{
+    public void hmDel(String key, Object hashKey) {
+        try {
             List<Object> keyList = new ArrayList<Object>();
             keyList.add(key);
             keyList.add(hashKey);
             redisSerializer(redisTemplate).execute(delScript, keyList);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             logger.info("redis hash map del error" + e.toString());
         }
@@ -180,9 +182,9 @@ public class RedisUtils {
      * @param k
      * @param v
      */
-    public void lPush(String k,Object v){
+    public void lPush(String k, Object v) {
         ListOperations<String, Object> list = redisSerializer(redisTemplate).opsForList();
-        list.rightPush(k,v);
+        list.rightPush(k, v);
     }
 
     /**
@@ -192,9 +194,9 @@ public class RedisUtils {
      * @param l1
      * @return
      */
-    public List<Object> lRange(String k, long l, long l1){
+    public List<Object> lRange(String k, long l, long l1) {
         ListOperations<String, Object> list = redisSerializer(redisTemplate).opsForList();
-        return list.range(k,l,l1);
+        return list.range(k, l, l1);
     }
 
     /**
@@ -202,9 +204,9 @@ public class RedisUtils {
      * @param key
      * @param value
      */
-    public void add(String key,Object value){
+    public void add(String key, Object value) {
         SetOperations<String, Object> set = redisSerializer(redisTemplate).opsForSet();
-        set.add(key,value);
+        set.add(key, value);
     }
 
     /**
@@ -212,7 +214,7 @@ public class RedisUtils {
      * @param key
      * @return
      */
-    public Set<Object> setMembers(String key){
+    public Set<Object> setMembers(String key) {
         SetOperations<String, Object> set = redisSerializer(redisTemplate).opsForSet();
         return set.members(key);
     }
@@ -223,9 +225,9 @@ public class RedisUtils {
      * @param value
      * @param scoure
      */
-    public void zAdd(String key,Object value,double scoure){
+    public void zAdd(String key, Object value, double scoure) {
         ZSetOperations<String, Object> zset = redisSerializer(redisTemplate).opsForZSet();
-        zset.add(key,value,scoure);
+        zset.add(key, value, scoure);
     }
 
     /**
@@ -235,7 +237,7 @@ public class RedisUtils {
      * @param scoure1
      * @return
      */
-    public Set<Object> rangeByScore(String key,double scoure,double scoure1){
+    public Set<Object> rangeByScore(String key, double scoure, double scoure1) {
         ZSetOperations<String, Object> zset = redisSerializer(redisTemplate).opsForZSet();
         return zset.rangeByScore(key, scoure, scoure1);
     }
