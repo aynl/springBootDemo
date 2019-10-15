@@ -16,12 +16,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>1.5.10.RELEASE</spring-boot.version>
+        <spring-boot.version>2.0.3.RELEASE</spring-boot.version>
         <org.log4j2.vesrion>2.9.1</org.log4j2.vesrion>
         <com.sun.mail.version>1.6.1</com.sun.mail.version>
         <commons.lang.version>2.6</commons.lang.version>
     </properties>
-
 
     <build>
         <pluginManagement>
