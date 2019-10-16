@@ -1,0 +1,13 @@
+dubbo:
+  application:
+    name:dubbo-provider
+  registry:
+    address:zookeeper://127.0.0.1:2181
+  protocol:
+    name:dubbo
+    port:2088
+  scan:
+    base-packages:com.springboot.dubbo.demo
+
+server:
+  port: 8061
